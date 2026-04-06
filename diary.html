@@ -11,7 +11,7 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* 頂部導航列 */
+        /* 頂部導覽列 */
         .nav-bar {
             width: 100%; padding: 15px; background: rgba(0,0,0,0.85);
             backdrop-filter: blur(10px); position: fixed; top: 0; z-index: 100;
@@ -62,7 +62,7 @@
         }
         .btn-cheer { background: linear-gradient(135deg, #ff4081, #f50057); color: white; }
         .btn-comment { background: rgba(255,255,255,0.15); color: white; }
-        .btn:active { transform: scale(0.95); }
+        .btn:disabled { opacity: 0.6; cursor: default; }
 
         /* 留言區 */
         .comment-section { 
@@ -93,7 +93,8 @@
 </div>
 
 <div class="diary-container" id="diary-list">
-    </div>
+    <div style="text-align: center; padding: 50px;">載入雲端日誌中...</div>
+</div>
 
 <div class="footer-note">
     讓愛跨越海洋 ｜ 守護望安生態紀錄<br>
@@ -101,35 +102,30 @@
 </div>
 
 <script>
-    // 影片資料庫
-    const videoData = [
-        {
-            id: 1,
-            date: "2025.11.04",
-            title: "碳次郎跟橘豆子在望安畢業囉",
-            desc: "今天天氣晴朗，兩個資優生要回家了！看牠們充滿活力的樣子，真替牠們高興。",
-            ytId: "dUCQ1UTNK7I", 
-            cheers: 245,
-            comments: [
-                { user: "志工阿強", text: "以後要再回來找我們喔。" },
-                { user: "望安小龜粉", text: "要平安長大喔！" }
-            ]
-        },
-        {
-            id: 2,
-            date: "2026.04.04",
-            title: "保育人員的日常巡邏",
-            desc: "即使是連續假期，巡邏工作也不間斷，為了守護下一代的海龜。大家辛苦了！",
-            ytId: "3tmd-ClpJKA", 
-            cheers: 189,
-            comments: [
-                { user: "遊客小玲", text: "辛苦你們了，謝謝你們守護望安。" }
-            ]
-        }
-    ];
+    const gasUrl = "https://script.google.com/macros/s/AKfycbwi7ZxPQV3i14SJqCIs8A1s90ZVzrCNXkfnrQGWvFSbPh7vMZdE23u8CevesiHNPc5sng/exec";
+    let videoData = [];
 
+    // 從 GAS 抓取日誌資料
+    function fetchDiary() {
+        fetch(gasUrl + "?action=getDiary")
+        .then(res => res.json())
+        .then(data => {
+            videoData = data;
+            renderDiary();
+        })
+        .catch(err => {
+            document.getElementById('diary-list').innerHTML = "暫時無法取得日誌資料，請檢查網路連線。";
+        });
+    }
+
+    // 渲染畫面上色
     function renderDiary() {
         const list = document.getElementById('diary-list');
+        if (videoData.length === 0) {
+            list.innerHTML = "<div style='text-align:center;'>目前尚無日誌。</div>";
+            return;
+        }
+
         list.innerHTML = videoData.map(item => `
             <div class="diary-card">
                 <div class="video-responsive">
@@ -145,58 +141,82 @@
                     <p class="diary-desc">${item.desc}</p>
                     
                     <div class="action-bar">
-                        <button class="btn btn-cheer" id="cheer-btn-${item.id}" onclick="cheer(${item.id})">❤️ 加油 (${item.cheers})</button>
-                        <button class="btn btn-comment" onclick="toggleComments(${item.id})">💬 留言 (${item.comments.length})</button>
+                        <button class="btn btn-cheer" id="cheer-btn-${item.id}" onclick="cheer(${item.id})">❤️ 加油 (${item.cheers || 0})</button>
+                        <button class="btn btn-comment" onclick="toggleComments(${item.id})">💬 留言互動</button>
                     </div>
                 </div>
 
                 <div class="comment-section" id="comment-section-${item.id}">
                     <div id="comment-list-${item.id}">
-                        ${item.comments.map(c => `<div class="comment-item"><span class="comment-user">${c.user}:</span>${c.text}</div>`).join('')}
+                        <div class="comment-item" style="opacity:0.6; font-size:12px;">留下您的鼓勵，溫暖守護人員的心...</div>
                     </div>
                     <div class="comment-input-group">
                         <input type="text" class="comment-input" id="input-${item.id}" placeholder="想對小龜說的話...">
-                        <button class="send-btn" onclick="addComment(${item.id})">發送</button>
+                        <button class="send-btn" id="send-btn-${item.id}" onclick="addComment(${item.id})">發送</button>
                     </div>
                 </div>
             </div>
         `).join('');
     }
 
-    // 切換留言顯示/隱藏
     function toggleComments(id) {
         const section = document.getElementById(`comment-section-${id}`);
-        const isVisible = section.style.display === 'block';
-        section.style.display = isVisible ? 'none' : 'block';
+        section.style.display = (section.style.display === 'block') ? 'none' : 'block';
     }
 
-    // 模擬新增留言
+    // 將留言同步至 GAS
     function addComment(id) {
         const input = document.getElementById(`input-${id}`);
+        const btn = document.getElementById(`send-btn-${id}`);
         const text = input.value.trim();
         if (!text) return;
 
-        const list = document.getElementById(`comment-list-${id}`);
-        const div = document.createElement('div');
-        div.className = 'comment-item';
-        div.innerHTML = `<span class="comment-user">守護者:</span>${text}`;
-        list.appendChild(div);
-        
-        input.value = "";
-        console.log(`留言已暫存(ID:${id}): ${text}`);
+        btn.disabled = true;
+        btn.innerText = "傳送中";
+
+        const payload = {
+            action: "addComment",
+            videoId: id,
+            user: "溫暖守護者",
+            comment: text
+        };
+
+        fetch(gasUrl, {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify(payload)
+        }).then(() => {
+            const list = document.getElementById(`comment-list-${id}`);
+            const div = document.createElement('div');
+            div.className = 'comment-item';
+            div.innerHTML = `<span class="comment-user">守護者:</span>${text}`;
+            list.appendChild(div);
+            
+            input.value = "";
+            btn.disabled = false;
+            btn.innerText = "發送";
+            alert("留言已成功上傳雲端！");
+        });
     }
 
-    // 加油打氣功能
+    // 加油功能 (同步至留言區作為一種紀錄)
     function cheer(id) {
         const btn = document.getElementById(`cheer-btn-${id}`);
         btn.innerHTML = "✨ 感謝加油！";
         btn.disabled = true;
         btn.style.background = "#444";
-        btn.style.cursor = "default";
+
+        const payload = {
+            action: "addComment",
+            videoId: id,
+            user: "系統系統",
+            comment: "給予了一個❤️加油鼓勵！"
+        };
+        fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
     }
 
-    // 網頁載入後執行渲染
-    window.onload = renderDiary;
+    // 啟動
+    window.onload = fetchDiary;
 </script>
 
 </body>
