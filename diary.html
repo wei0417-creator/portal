@@ -5,84 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>海龜日誌｜望安綠蠵龜保育中心</title>
     <style>
-        body {
-            font-family: 'Microsoft JhengHei', sans-serif;
-            margin: 0; background-color: #001a1f; color: white;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        /* 頂部導覽列 */
-        .nav-bar {
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(10px); position: fixed; top: 0; z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
-            box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .back-btn { 
-            color: white; text-decoration: none; font-size: 14px; 
-            border: 1px solid white; padding: 6px 15px; border-radius: 20px; 
-            transition: 0.3s; background: rgba(255,255,255,0.1);
-        }
+        body { font-family: 'Microsoft JhengHei', sans-serif; margin: 0; background-color: #001a1f; color: white; display: flex; flex-direction: column; align-items: center; }
+        .nav-bar { width: 100%; padding: 15px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); position: fixed; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .back-btn { color: white; text-decoration: none; font-size: 14px; border: 1px solid white; padding: 6px 15px; border-radius: 20px; transition: 0.3s; background: rgba(255,255,255,0.1); }
         .back-btn:hover { background: white; color: #001a1f; }
-
-        /* 內容容器 */
         .diary-container { margin-top: 90px; width: 95%; max-width: 500px; padding-bottom: 50px; }
-
-        /* 日誌卡片 */
-        .diary-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 25px; overflow: hidden; margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-
-        /* YouTube 響應式容器 (16:9) */
-        .video-responsive {
-            overflow: hidden; padding-bottom: 56.25%; position: relative; height: 0;
-            background: #000;
-        }
-        .video-responsive iframe {
-            left: 0; top: 0; height: 100%; width: 100%; position: absolute; border: 0;
-        }
+        .diary-card { background: rgba(255, 255, 255, 0.1); border-radius: 25px; overflow: hidden; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        
+        /* YouTube 容器 */
+        .video-responsive { overflow: hidden; padding-bottom: 56.25%; position: relative; height: 0; background: #000; }
+        .video-responsive div { left: 0; top: 0; height: 100%; width: 100%; position: absolute; border: 0; }
 
         .info-box { padding: 20px; }
         .date-tag { font-size: 12px; color: #00ccff; font-weight: bold; }
+        .view-count { font-size: 11px; color: #aaa; margin-left: 10px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 5px; }
         .diary-title { font-size: 19px; margin: 8px 0 10px 0; color: #fff; }
         .diary-desc { font-size: 14.5px; color: #ddd; line-height: 1.6; }
 
-        /* 互動按鈕區 */
-        .action-bar { 
-            display: flex; gap: 12px; margin-top: 15px; padding-top: 15px; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-        }
-        .btn { 
-            flex: 1; padding: 12px; border-radius: 15px; border: none; 
-            font-weight: bold; cursor: pointer; transition: 0.3s; 
-            display: flex; align-items: center; justify-content: center; gap: 6px; 
-        }
+        /* 互動區 */
+        .action-bar { display: flex; gap: 12px; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .btn { flex: 1; padding: 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-cheer { background: linear-gradient(135deg, #ff4081, #f50057); color: white; }
         .btn-comment { background: rgba(255,255,255,0.15); color: white; }
-        .btn:disabled { opacity: 0.6; cursor: default; }
-
-        /* 留言區 */
-        .comment-section { 
-            background: rgba(0,0,0,0.3); padding: 20px; display: none; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-        }
-        .comment-item { font-size: 13.5px; margin-bottom: 12px; line-height: 1.5; color: #eee; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .comment-user { color: #00ccff; font-weight: bold; margin-right: 8px; }
-
-        /* 留言輸入 */
-        .comment-input-group { display: flex; gap: 10px; margin-top: 15px; }
-        .comment-input { 
-            flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); 
-            border-radius: 12px; padding: 10px; color: white; font-size: 14px; outline: none;
-        }
-        .comment-input:focus { border-color: #00ccff; }
-        .send-btn { background: #00796b; border: none; color: white; border-radius: 12px; padding: 0 18px; cursor: pointer; font-weight: bold; }
-
+        
         .footer-note { font-size: 12px; opacity: 0.6; margin: 40px 0; text-align: center; line-height: 1.8; }
     </style>
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
@@ -93,129 +41,88 @@
 </div>
 
 <div class="diary-container" id="diary-list">
-    <div style="text-align: center; padding: 50px;">載入雲端日誌中...</div>
+    <div style="text-align: center; padding: 50px;">📡 正在連線至望安雲端資料庫...</div>
 </div>
 
-<div class="footer-note">
-    讓愛跨越海洋 ｜ 守護望安生態紀錄<br>
-    台灣長期健康照顧產業發展協會澎湖辦事處 技術支援
-</div>
+<div class="footer-note">讓愛跨越海洋 ｜ 台灣長期健康照顧產業發展協會澎湖辦事處 技術支援</div>
 
 <script>
+    // 您的 GAS API 網址
     const gasUrl = "https://script.google.com/macros/s/AKfycbwi7ZxPQV3i14SJqCIs8A1s90ZVzrCNXkfnrQGWvFSbPh7vMZdE23u8CevesiHNPc5sng/exec";
     let videoData = [];
+    let trackedVideos = new Set(); // 紀錄本輪已統計過的影片，避免重複洗數據
 
-    // 從 GAS 抓取日誌資料
+    // 1. 初始化：從雲端抓取日誌
     function fetchDiary() {
         fetch(gasUrl + "?action=getDiary")
         .then(res => res.json())
         .then(data => {
             videoData = data;
             renderDiary();
-        })
-        .catch(err => {
-            document.getElementById('diary-list').innerHTML = "暫時無法取得日誌資料，請檢查網路連線。";
         });
     }
 
-    // 渲染畫面上色
+    // 2. 渲染卡片結構
     function renderDiary() {
         const list = document.getElementById('diary-list');
-        if (videoData.length === 0) {
-            list.innerHTML = "<div style='text-align:center;'>目前尚無日誌。</div>";
-            return;
-        }
-
         list.innerHTML = videoData.map(item => `
             <div class="diary-card">
                 <div class="video-responsive">
-                    <iframe src="https://www.youtube.com/embed/${item.ytId.trim()}?rel=0" 
-                            title="YouTube video player" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            allowfullscreen></iframe>
-                </div>
-                
+                    <div id="yt-player-${item.id}"></div> </div>
                 <div class="info-box">
                     <span class="date-tag">${item.date}</span>
+                    <span class="view-count">平台點擊：${item.cheers || 0} 次</span>
                     <h3 class="diary-title">${item.title}</h3>
                     <p class="diary-desc">${item.desc}</p>
-                    
                     <div class="action-bar">
-                        <button class="btn btn-cheer" id="cheer-btn-${item.id}" onclick="cheer(${item.id})">❤️ 加油 (${item.cheers || 0})</button>
-                        <button class="btn btn-comment" onclick="toggleComments(${item.id})">💬 留言互動</button>
-                    </div>
-                </div>
-
-                <div class="comment-section" id="comment-section-${item.id}">
-                    <div id="comment-list-${item.id}">
-                        <div class="comment-item" style="opacity:0.6; font-size:12px;">留下您的鼓勵，溫暖守護人員的心...</div>
-                    </div>
-                    <div class="comment-input-group">
-                        <input type="text" class="comment-input" id="input-${item.id}" placeholder="想對小龜說的話...">
-                        <button class="send-btn" id="send-btn-${item.id}" onclick="addComment(${item.id})">發送</button>
+                        <button class="btn btn-cheer" onclick="alert('感謝您的鼓勵！')">❤️ 給予加油</button>
                     </div>
                 </div>
             </div>
         `).join('');
+
+        // 核心：當 HTML 渲染完後，呼叫 YouTube API 建立播放器
+        initYouTubePlayers();
     }
 
-    function toggleComments(id) {
-        const section = document.getElementById(`comment-section-${id}`);
-        section.style.display = (section.style.display === 'block') ? 'none' : 'block';
-    }
-
-    // 將留言同步至 GAS
-    function addComment(id) {
-        const input = document.getElementById(`input-${id}`);
-        const btn = document.getElementById(`send-btn-${id}`);
-        const text = input.value.trim();
-        if (!text) return;
-
-        btn.disabled = true;
-        btn.innerText = "傳送中";
-
-        const payload = {
-            action: "addComment",
-            videoId: id,
-            user: "溫暖守護者",
-            comment: text
-        };
-
-        fetch(gasUrl, {
-            method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify(payload)
-        }).then(() => {
-            const list = document.getElementById(`comment-list-${id}`);
-            const div = document.createElement('div');
-            div.className = 'comment-item';
-            div.innerHTML = `<span class="comment-user">守護者:</span>${text}`;
-            list.appendChild(div);
-            
-            input.value = "";
-            btn.disabled = false;
-            btn.innerText = "發送";
-            alert("留言已成功上傳雲端！");
+    // 3. YouTube API 初始化播放器
+    function initYouTubePlayers() {
+        videoData.forEach(item => {
+            new YT.Player(`yt-player-${item.id}`, {
+                height: '100%',
+                width: '100%',
+                videoId: item.ytId.trim(),
+                playerVars: { 'rel': 0, 'modestbranding': 1 },
+                events: {
+                    'onStateChange': (event) => onPlayerStateChange(event, item.id)
+                }
+            });
         });
     }
 
-    // 加油功能 (同步至留言區作為一種紀錄)
-    function cheer(id) {
-        const btn = document.getElementById(`cheer-btn-${id}`);
-        btn.innerHTML = "✨ 感謝加油！";
-        btn.disabled = true;
-        btn.style.background = "#444";
+    // 4. 監測播放狀態
+    function onPlayerStateChange(event, dbId) {
+        // 當影片開始播放 (YT.PlayerState.PLAYING = 1)
+        if (event.data == YT.PlayerState.PLAYING) {
+            if (!trackedVideos.has(dbId)) {
+                console.log("偵測到觀看動作，正在同步至 Excel...");
+                
+                // 發送數據到 GAS 的 trackView 模組
+                fetch(gasUrl, {
+                    method: "POST",
+                    mode: "no-cors", // 跨網域通訊
+                    body: JSON.stringify({
+                        action: "trackView",
+                        videoId: dbId
+                    })
+                });
 
-        const payload = {
-            action: "addComment",
-            videoId: id,
-            user: "系統系統",
-            comment: "給予了一個❤️加油鼓勵！"
-        };
-        fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+                trackedVideos.add(dbId); // 本次開啟頁面僅計算一次，防止洗數據
+            }
+        }
     }
 
-    // 啟動
+    // 網頁載入後執行
     window.onload = fetchDiary;
 </script>
 
