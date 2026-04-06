@@ -7,43 +7,18 @@
     <style>
         :root { --primary: #00796b; --secondary: #004d40; --price: #d32f2f; }
         body { font-family: 'Microsoft JhengHei', sans-serif; margin: 0; background: #f0f4f5; color: #333; display: flex; flex-direction: column; align-items: center; }
-
-        /* 導航列 */
-        .nav-bar { width: 100%; padding: 15px; background: var(--secondary); position: fixed; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .back-btn { color: white; text-decoration: none; font-size: 14px; border: 1px solid white; padding: 6px 15px; border-radius: 20px; transition: 0.3s; }
-        .back-btn:hover { background: white; color: var(--secondary); }
-
+        .nav-bar { width: 100%; padding: 15px; background: var(--secondary); position: fixed; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; color: white; }
+        .back-btn { color: white; text-decoration: none; font-size: 14px; border: 1px solid white; padding: 6px 15px; border-radius: 20px; }
         .container { margin-top: 100px; width: 95%; max-width: 800px; padding-bottom: 50px; }
-        .section-title { border-left: 5px solid var(--primary); padding-left: 15px; margin-bottom: 25px; color: var(--secondary); }
-
-        /* 活動卡片 */
-        .event-card { background: white; border-radius: 25px; overflow: hidden; display: flex; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 25px; transition: 0.3s; }
-        .event-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+        .event-card { background: white; border-radius: 25px; overflow: hidden; display: flex; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 25px; }
         .event-date { background: var(--primary); color: white; width: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; }
-        .event-date .day { font-size: 28px; }
-
-        .event-info { padding: 25px; flex: 1; position: relative; }
-        .status-tag { position: absolute; top: 20px; right: 25px; padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-        .status-open { background: #e8f5e9; color: #2e7d32; }
-        .status-full { background: #ffebee; color: #c62828; }
-
-        .event-title { font-size: 20px; margin: 0 0 10px 0; color: var(--secondary); }
-        .price-text { color: var(--price); font-weight: bold; margin-bottom: 15px; font-size: 16px; }
-        .event-desc { font-size: 14.5px; color: #666; line-height: 1.6; margin-bottom: 20px; }
-
-        .btn { padding: 12px 20px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 15px; }
-        .btn-reg { background: var(--primary); color: white; width: 100%; }
-        .btn-report { background: #f0f0f0; color: #555; width: 100%; margin-top: 10px; }
-
-        /* 彈窗樣式 */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-box { background: white; width: 90%; max-width: 420px; padding: 30px; border-radius: 30px; position: relative; box-sizing: border-box; text-align: center; }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 24px; cursor: pointer; color: #aaa; }
-        
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-size: 15px; }
-        .bank-info { background: #fff9c4; padding: 15px; border-radius: 15px; text-align: left; font-size: 14px; border: 1px solid #fbc02d; margin: 15px 0; line-height: 1.6; }
-
-        .footer { font-size: 12px; opacity: 0.5; margin-top: 60px; text-align: center; line-height: 2; }
+        .event-info { padding: 25px; flex: 1; }
+        .btn { padding: 12px 20px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-reg { background: var(--primary); color: white; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 30px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; }
+        .bank-info { background: #fff9c4; padding: 15px; border-radius: 15px; text-align: left; font-size: 14px; margin: 15px 0; }
     </style>
 </head>
 <body>
@@ -55,143 +30,108 @@
 </div>
 
 <div class="container">
-    <h2 class="section-title">本月活動預約</h2>
-    <div id="event-list" class="event-grid">
-        </div>
-
-    <div class="footer">
-        © 2026 台灣長期健康照顧產業發展協會澎湖辦事處 技術支援<br>
-        守護望安海洋生態紀錄
-    </div>
+    <div id="event-list">載入中...</div>
 </div>
 
 <div id="reg-modal" class="modal-overlay">
     <div class="modal-box">
-        <span class="close-btn" onclick="closeModal('reg-modal')">&times;</span>
-        <h3 id="form-title" style="color:var(--primary);">預約活動</h3>
-        <p id="form-price" style="color:var(--price); font-weight:bold;"></p>
-        <form id="reg-form">
-            <input type="text" id="reg-name" placeholder="報名者姓名" required>
-            <input type="tel" id="reg-phone" placeholder="聯絡電話" required>
-            <input type="number" id="reg-people" placeholder="人數" min="1" required>
-            <button type="submit" class="btn btn-reg">確認報名，查看繳費資訊</button>
-        </form>
+        <h3 id="form-title">預約報名</h3>
+        <input type="text" id="reg-name" placeholder="姓名">
+        <input type="tel" id="reg-phone" placeholder="電話">
+        <input type="number" id="reg-people" placeholder="人數" min="1" value="1">
+        <button onclick="submitReg()" class="btn btn-reg">確認報名並查看匯款資訊</button>
+        <button onclick="closeModal('reg-modal')" style="background:none; border:none; color:#aaa; cursor:pointer; margin-top:10px;">取消</button>
     </div>
 </div>
 
 <div id="pay-modal" class="modal-overlay">
     <div class="modal-box">
-        <span class="close-btn" onclick="closeModal('pay-modal')">&times;</span>
-        <h3 style="color:var(--primary);">💳 繳費資訊與回報</h3>
-        <div class="bank-info">
-            <b style="color:var(--price);">應付總額：<span id="pay-total-price"></span></b><br><br>
-            <b>匯款帳戶：</b><br>
-            <div id="bank-detail-text"></div>
-        </div>
-        <p style="font-size: 13px; color: #666;">匯款完成後，請填寫末五碼供核對：</p>
-        <input type="text" id="report-name" placeholder="報名者姓名 (需一致)">
-        <input type="text" id="report-code" placeholder="銀行帳號後五碼" maxlength="5">
-        <button onclick="submitPayment()" class="btn btn-reg">提交驗證回報</button>
-        <p style="font-size: 11px; color: #999; margin-top: 15px;">* 提交後工作人員將於 24 小時內對帳。</p>
+        <h3>💰 匯款回報</h3>
+        <div class="bank-info" id="bank-info-box"></div>
+        <input type="text" id="pay-name" placeholder="報名姓名">
+        <input type="text" id="pay-code" placeholder="帳號末五碼" maxlength="5">
+        <button onclick="submitPay()" class="btn btn-reg">提交核對</button>
+        <button onclick="closeModal('pay-modal')" style="background:none; border:none; color:#aaa; cursor:pointer; margin-top:10px;">關閉</button>
     </div>
 </div>
 
 <script>
-    // 未來替換為您的 GAS 網址
-    const gasUrl = "https://script.google.com/macros/s/您的ID/exec";
-
-    const eventsData = [
-        { 
-            id: 1, month: "APR", day: "15", title: "夜間尋龜觀察營", 
-            desc: "見證綠蠵龜上岸產卵，專業導覽解說。此活動由保育中心主辦。", 
-            price: "600", bank: "(007) 第一銀行 帳號:12345 戶名:費特寧斯有限公司",
-            status: "報名中", isOpen: true 
-        },
-        { 
-            id: 2, month: "MAY", day: "01", title: "望安社區手作趣", 
-            desc: "跟著奶奶編織海龜草鞋。此活動由社區協會辦理。", 
-            price: "250", bank: "(700) 郵局 帳號:67890 戶名:望安社區發展協會",
-            status: "報名中", isOpen: true 
-        }
-    ];
-
+    const gasUrl = "https://script.google.com/macros/s/AKfycbwi7ZxPQV3i14SJqCIs8A1s90ZVzrCNXkfnrQGWvFSbPh7vMZdE23u8CevesiHNPc5sng/exec";
+    let eventsData = [];
     let currentEvent = null;
+
+    // 1. 抓取活動
+    function fetchEvents() {
+        fetch(gasUrl + "?action=getEvents")
+        .then(res => res.json())
+        .then(data => {
+            eventsData = data;
+            renderEvents();
+        });
+    }
 
     function renderEvents() {
         const list = document.getElementById('event-list');
         list.innerHTML = eventsData.map(ev => `
             <div class="event-card">
-                <div class="event-date"><span>${ev.month}</span><span class="day">${ev.day}</span></div>
+                <div class="event-date"><span>${ev.month}</span><span style="font-size:24px;">${ev.day}</span></div>
                 <div class="event-info">
-                    <span class="status-tag ${ev.isOpen ? 'status-open' : 'status-full'}">${ev.status}</span>
-                    <h3 class="event-title">${ev.title}</h3>
-                    <p class="price-text">費用：NT$ ${ev.price} / 人</p>
-                    <p class="event-desc">${ev.desc}</p>
-                    <button class="btn btn-reg" ${ev.isOpen ? '' : 'disabled'} onclick='openReg(${JSON.stringify(ev)})'>
-                        立即預約報名
-                    </button>
-                    <button class="btn btn-report" onclick='openPayOnly(${JSON.stringify(ev)})'>已匯款？填寫後五碼</button>
+                    <h3 style="margin:0;">${ev.title}</h3>
+                    <p style="color:var(--price); font-weight:bold;">NT$ ${ev.price} / 人</p>
+                    <p style="font-size:14px; color:#666;">${ev.desc}</p>
+                    <button class="btn btn-reg" onclick="openReg('${ev.title}', ${ev.price})">立即預約</button>
+                    <button class="btn" style="background:#eee;" onclick="openPay('${ev.title}', '${ev.bank}')">已匯款回報</button>
                 </div>
             </div>
         `).join('');
     }
 
-    function openReg(ev) {
-        currentEvent = ev;
-        document.getElementById('form-title').innerText = ev.title;
-        document.getElementById('form-price').innerText = "單人費用：NT$ " + ev.price;
+    function openReg(title, price) {
+        currentEvent = { title, price };
+        document.getElementById('form-title').innerText = title;
         document.getElementById('reg-modal').style.display = 'flex';
     }
 
-    // 專供只想要回報後五碼的人使用
-    function openPayOnly(ev) {
-        currentEvent = ev;
-        document.getElementById('pay-total-price').innerText = "依照報名人數計算";
-        document.getElementById('bank-detail-text').innerText = ev.bank;
+    function openPay(title, bank) {
+        currentEvent = { title };
+        document.getElementById('bank-info-box').innerHTML = `<b>活動：${title}</b><br>匯款資訊：${bank}`;
         document.getElementById('pay-modal').style.display = 'flex';
     }
 
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // 提交報名
-    document.getElementById('reg-form').onsubmit = function(e) {
-        e.preventDefault();
-        const num = document.getElementById('reg-people').value;
-        const total = currentEvent.price * num;
-        
-        // 這裡可以呼叫 fetch(gasUrl, ...) 傳送報名資料
-        
-        alert("報名資料已記錄，請完成匯款。");
+    // 3. 提交報名
+    function submitReg() {
+        const name = document.getElementById('reg-name').value;
+        const phone = document.getElementById('reg-phone').value;
+        const people = document.getElementById('reg-people').value;
+        if(!name || !phone) return alert("請填寫完整");
+
+        fetch(gasUrl, {
+            method: "POST", mode: "no-cors",
+            body: JSON.stringify({
+                action: "register", title: currentEvent.title, name, phone, people, total: currentEvent.price * people
+            })
+        });
+        alert("報名資料已送出，請記得匯款並回來回報末五碼！");
         closeModal('reg-modal');
-        
-        document.getElementById('pay-total-price').innerText = "NT$ " + total;
-        document.getElementById('bank-detail-text').innerText = currentEvent.bank;
-        document.getElementById('pay-modal').style.display = 'flex';
-    };
+    }
 
-    // 提交後五碼驗證
-    function submitPayment() {
-        const name = document.getElementById('report-name').value;
-        const code = document.getElementById('report-code').value;
-        
-        if(!name || code.length < 5) return alert("請完整填寫姓名與匯款後五碼");
+    // 4. 提交末五碼
+    function submitPay() {
+        const name = document.getElementById('pay-name').value;
+        const code = document.getElementById('pay-code').value;
+        if(!name || !code) return alert("請填寫完整");
 
-        const data = {
-            action: "reportPayment",
-            name: name,
-            code: code,
-            event: currentEvent.title
-        };
-
-        // 串接 GAS 範例:
-        // fetch(gasUrl, { method: "POST", body: JSON.stringify(data) })
-        
-        alert("驗證回報已送出！管理員核對後會發送通知。");
+        fetch(gasUrl, {
+            method: "POST", mode: "no-cors",
+            body: JSON.stringify({ action: "reportPayment", event: currentEvent.title, name, code })
+        });
+        alert("回報成功！工作人員將儘速核對。");
         closeModal('pay-modal');
     }
 
-    window.onload = renderEvents;
+    window.onload = fetchEvents;
 </script>
-
 </body>
 </html>
