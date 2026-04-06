@@ -1,27 +1,50 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <script src="https://apis.google.com/js/platform.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>海龜日誌｜望安綠蠵龜保育中心</title>
+    <script src="https://apis.google.com/js/platform.js"></script>
     <style>
         body { font-family: 'Microsoft JhengHei', sans-serif; margin: 0; background-color: #001a1f; color: white; display: flex; flex-direction: column; align-items: center; }
+        
+        /* 導覽列 */
         .nav-bar { width: 100%; padding: 15px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); position: fixed; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .back-btn { color: white; text-decoration: none; font-size: 14px; border: 1px solid white; padding: 6px 15px; border-radius: 20px; transition: 0.3s; background: rgba(255,255,255,0.1); }
-        .diary-container { margin-top: 90px; width: 95%; max-width: 500px; padding-bottom: 50px; }
+        .back-btn:hover { background: white; color: #001a1f; }
+
+        /* 訂閱橫幅：美化重點 */
+        .subscribe-banner {
+            margin-top: 85px; /* 避開固定導覽列 */
+            width: 90%;
+            max-width: 500px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(0, 204, 255, 0.3);
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+        }
+        .subscribe-text { font-size: 14px; color: #00ccff; margin-bottom: 12px; font-weight: bold; letter-spacing: 1px; }
+
+        /* 日誌容器 */
+        .diary-container { width: 95%; max-width: 500px; padding-bottom: 50px; margin-top: 20px; }
         .diary-card { background: rgba(255, 255, 255, 0.1); border-radius: 25px; overflow: hidden; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.2); }
         .video-responsive { overflow: hidden; padding-bottom: 56.25%; position: relative; height: 0; background: #000; }
         .video-responsive div { left: 0; top: 0; height: 100%; width: 100%; position: absolute; border: 0; }
+        
         .info-box { padding: 20px; }
         .date-tag { font-size: 12px; color: #00ccff; font-weight: bold; }
         .view-count { font-size: 11px; color: #aaa; margin-left: 10px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 5px; }
         .diary-title { font-size: 19px; margin: 8px 0 10px 0; color: #fff; }
         .diary-desc { font-size: 14.5px; color: #ddd; line-height: 1.6; }
+        
         .action-bar { display: flex; gap: 12px; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
         .btn { flex: 1; padding: 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-cheer { background: linear-gradient(135deg, #ff4081, #f50057); color: white; }
         .btn-comment { background: rgba(255,255,255,0.15); color: white; }
+        
         .comment-section { background: rgba(0,0,0,0.3); padding: 20px; display: none; border-top: 1px solid rgba(255,255,255,0.1); }
         .comment-item { font-size: 13.5px; margin-bottom: 12px; color: #eee; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
         .comment-input-group { display: flex; gap: 10px; margin-top: 15px; }
@@ -36,27 +59,24 @@
 <div class="nav-bar">
     <a href="index.html" class="back-btn">← 回門戶首頁</a>
     <span style="font-weight: bold;">🎥 海龜成長日誌</span>
-    <div class="diary-container" id="diary-list">
-    <div style="text-align: center; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px;">
-        <p style="font-size: 13px; color: #00ccff; margin-bottom: 10px; font-weight: bold;">🐢 喜歡我們的影片嗎？歡迎訂閱支持！</p>
-        <div class="g-ytsubscribe" 
-             data-channelid="UCmfQo3b47cTZE2-mGWB5yzQ" 
-             data-layout="full" 
-             data-theme="dark" 
-             data-count="default">
-        </div>
-    </div>
-    
-    <div style="text-align: center; padding: 50px;">📡 正在連線至望安雲端資料庫...</div>
-</div>
     <div style="width:65px;"></div>
+</div>
+
+<div class="subscribe-banner">
+    <p class="subscribe-text">🐢 喜歡我們的影片嗎？歡迎訂閱支持！</p>
+    <div class="g-ytsubscribe" 
+         data-channelid="UCmfQo3b47cTZE2-mGWB5yzQ" 
+         data-layout="full" 
+         data-theme="dark" 
+         data-count="default">
+    </div>
 </div>
 
 <div class="diary-container" id="diary-list">
     <div style="text-align: center; padding: 50px;">📡 正在連線至望安雲端資料庫...</div>
 </div>
 
-<div class="footer-note">讓愛跨越海洋 ｜ 台灣長期健康照顧產業發展協會澎湖辦事處 技術支援</div>
+<div class="footer-note">讓愛跨越海洋 ｜ 費特寧斯有限公司 技術支援</div>
 
 <script>
     const gasUrl = "https://script.google.com/macros/s/AKfycbwi7ZxPQV3i14SJqCIs8A1s90ZVzrCNXkfnrQGWvFSbPh7vMZdE23u8CevesiHNPc5sng/exec";
@@ -74,6 +94,11 @@
 
     function renderDiary() {
         const list = document.getElementById('diary-list');
+        if (videoData.length === 0) {
+            list.innerHTML = "<div style='text-align:center;'>目前暫無影片資料。</div>";
+            return;
+        }
+
         list.innerHTML = videoData.map(item => `
             <div class="diary-card">
                 <div class="video-responsive">
@@ -105,13 +130,13 @@
 
     function initYouTubePlayers() {
         if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
-            setTimeout(initYouTubePlayers, 200); // 確保 API 已載入
+            setTimeout(initYouTubePlayers, 200);
             return;
         }
         videoData.forEach(item => {
             new YT.Player(`yt-player-${item.id}`, {
                 videoId: item.ytId.trim(),
-                playerVars: { 'rel': 0, 'modestbranding': 1 },
+                playerVars: { 'rel': 0, 'modestbranding': 1, 'playsinline': 1 },
                 events: { 'onStateChange': (e) => onPlayerStateChange(e, item.id) }
             });
         });
