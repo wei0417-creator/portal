@@ -8,26 +8,24 @@
         body { font-family: 'Microsoft JhengHei', sans-serif; margin: 0; background-color: #001a1f; color: white; display: flex; flex-direction: column; align-items: center; }
         .nav-bar { width: 100%; padding: 15px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); position: fixed; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .back-btn { color: white; text-decoration: none; font-size: 14px; border: 1px solid white; padding: 6px 15px; border-radius: 20px; transition: 0.3s; background: rgba(255,255,255,0.1); }
-        .back-btn:hover { background: white; color: #001a1f; }
         .diary-container { margin-top: 90px; width: 95%; max-width: 500px; padding-bottom: 50px; }
-        .diary-card { background: rgba(255, 255, 255, 0.1); border-radius: 25px; overflow: hidden; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        
-        /* YouTube 容器 */
+        .diary-card { background: rgba(255, 255, 255, 0.1); border-radius: 25px; overflow: hidden; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.2); }
         .video-responsive { overflow: hidden; padding-bottom: 56.25%; position: relative; height: 0; background: #000; }
         .video-responsive div { left: 0; top: 0; height: 100%; width: 100%; position: absolute; border: 0; }
-
         .info-box { padding: 20px; }
         .date-tag { font-size: 12px; color: #00ccff; font-weight: bold; }
         .view-count { font-size: 11px; color: #aaa; margin-left: 10px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 5px; }
         .diary-title { font-size: 19px; margin: 8px 0 10px 0; color: #fff; }
         .diary-desc { font-size: 14.5px; color: #ddd; line-height: 1.6; }
-
-        /* 互動區 */
         .action-bar { display: flex; gap: 12px; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
         .btn { flex: 1; padding: 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-cheer { background: linear-gradient(135deg, #ff4081, #f50057); color: white; }
         .btn-comment { background: rgba(255,255,255,0.15); color: white; }
-        
+        .comment-section { background: rgba(0,0,0,0.3); padding: 20px; display: none; border-top: 1px solid rgba(255,255,255,0.1); }
+        .comment-item { font-size: 13.5px; margin-bottom: 12px; color: #eee; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .comment-input-group { display: flex; gap: 10px; margin-top: 15px; }
+        .comment-input { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; color: white; font-size: 14px; outline: none; }
+        .send-btn { background: #00796b; border: none; color: white; border-radius: 12px; padding: 0 18px; cursor: pointer; font-weight: bold; }
         .footer-note { font-size: 12px; opacity: 0.6; margin: 40px 0; text-align: center; line-height: 1.8; }
     </style>
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -36,7 +34,7 @@
 
 <div class="nav-bar">
     <a href="index.html" class="back-btn">← 回門戶首頁</a>
-    <span style="font-size: 17px; font-weight: bold; letter-spacing: 1px;">🎥 海龜成長日誌</span>
+    <span style="font-weight: bold;">🎥 海龜成長日誌</span>
     <div style="width:65px;"></div>
 </div>
 
@@ -44,15 +42,13 @@
     <div style="text-align: center; padding: 50px;">📡 正在連線至望安雲端資料庫...</div>
 </div>
 
-<div class="footer-note">讓愛跨越海洋 ｜ 台灣長期健康照顧產業發展協會澎湖辦事處 技術支援</div>
+<div class="footer-note">讓愛跨越海洋 ｜ 費特寧斯有限公司 技術支援</div>
 
 <script>
-    // 您的 GAS API 網址
-    const gasUrl = "https://script.google.com/macros/s/AKfycbzW8zmWnm_CJ5kvftaFfzChYiC31RRlk6wvqDmimkUTAH3zEVQnjeSOzyaKl2mviVCqXQ/exec";
+    const gasUrl = "https://script.google.com/macros/s/AKfycbwi7ZxPQV3i14SJqCIs8A1s90ZVzrCNXkfnrQGWvFSbPh7vMZdE23u8CevesiHNPc5sng/exec";
     let videoData = [];
-    let trackedVideos = new Set(); // 紀錄本輪已統計過的影片，避免重複洗數據
+    let trackedVideos = new Set();
 
-    // 1. 初始化：從雲端抓取日誌
     function fetchDiary() {
         fetch(gasUrl + "?action=getDiary")
         .then(res => res.json())
@@ -62,69 +58,87 @@
         });
     }
 
-    // 2. 渲染卡片結構
     function renderDiary() {
         const list = document.getElementById('diary-list');
         list.innerHTML = videoData.map(item => `
             <div class="diary-card">
                 <div class="video-responsive">
-                    <div id="yt-player-${item.id}"></div> </div>
+                    <div id="yt-player-${item.id}"></div>
+                </div>
                 <div class="info-box">
                     <span class="date-tag">${item.date}</span>
-                    <span class="view-count">平台點擊：${item.cheers || 0} 次</span>
+                    <span class="view-count">熱度：${item.cheers || 0}</span>
                     <h3 class="diary-title">${item.title}</h3>
                     <p class="diary-desc">${item.desc}</p>
                     <div class="action-bar">
-                        <button class="btn btn-cheer" onclick="alert('感謝您的鼓勵！')">❤️ 給予加油</button>
+                        <button class="btn btn-cheer" onclick="handleCheer(${item.id})">❤️ 加油</button>
+                        <button class="btn btn-comment" onclick="toggleComments(${item.id})">💬 留言</button>
+                    </div>
+                </div>
+                <div class="comment-section" id="comment-section-${item.id}">
+                    <div id="comment-list-${item.id}">
+                        <div class="comment-item" style="font-size:12px; opacity:0.6;">留下鼓勵的話吧...</div>
+                    </div>
+                    <div class="comment-input-group">
+                        <input type="text" class="comment-input" id="input-${item.id}" placeholder="想對小龜說的話...">
+                        <button class="send-btn" onclick="addComment(${item.id})">發送</button>
                     </div>
                 </div>
             </div>
         `).join('');
-
-        // 核心：當 HTML 渲染完後，呼叫 YouTube API 建立播放器
         initYouTubePlayers();
     }
 
-    // 3. YouTube API 初始化播放器
     function initYouTubePlayers() {
+        if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+            setTimeout(initYouTubePlayers, 200); // 確保 API 已載入
+            return;
+        }
         videoData.forEach(item => {
             new YT.Player(`yt-player-${item.id}`, {
-                height: '100%',
-                width: '100%',
                 videoId: item.ytId.trim(),
                 playerVars: { 'rel': 0, 'modestbranding': 1 },
-                events: {
-                    'onStateChange': (event) => onPlayerStateChange(event, item.id)
-                }
+                events: { 'onStateChange': (e) => onPlayerStateChange(e, item.id) }
             });
         });
     }
 
-    // 4. 監測播放狀態
     function onPlayerStateChange(event, dbId) {
-        // 當影片開始播放 (YT.PlayerState.PLAYING = 1)
-        if (event.data == YT.PlayerState.PLAYING) {
-            if (!trackedVideos.has(dbId)) {
-                console.log("偵測到觀看動作，正在同步至 Excel...");
-                
-                // 發送數據到 GAS 的 trackView 模組
-                fetch(gasUrl, {
-                    method: "POST",
-                    mode: "no-cors", // 跨網域通訊
-                    body: JSON.stringify({
-                        action: "trackView",
-                        videoId: dbId
-                    })
-                });
-
-                trackedVideos.add(dbId); // 本次開啟頁面僅計算一次，防止洗數據
-            }
+        if (event.data == YT.PlayerState.PLAYING && !trackedVideos.has(dbId)) {
+            fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "trackView", videoId: dbId }) });
+            trackedVideos.add(dbId);
         }
     }
 
-    // 網頁載入後執行
+    function toggleComments(id) {
+        const section = document.getElementById(`comment-section-${id}`);
+        section.style.display = (section.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function addComment(id) {
+        const input = document.getElementById(`input-${id}`);
+        const text = input.value.trim();
+        if (!text) return;
+        
+        fetch(gasUrl, {
+            method: "POST", mode: "no-cors",
+            body: JSON.stringify({ action: "addComment", videoId: id, user: "暖心守護者", comment: text })
+        });
+
+        const list = document.getElementById(`comment-list-${id}`);
+        const div = document.createElement('div');
+        div.className = 'comment-item';
+        div.innerHTML = `<span style="color:#00ccff; font-weight:bold;">守護者:</span> ${text}`;
+        list.appendChild(div);
+        input.value = "";
+    }
+
+    function handleCheer(id) {
+        alert("收到您的加油鼓勵！已同步至雲端。");
+        fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "trackView", videoId: id }) });
+    }
+
     window.onload = fetchDiary;
 </script>
-
 </body>
 </html>
