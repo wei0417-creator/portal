@@ -31,8 +31,9 @@
         /* 日誌容器 */
         .diary-container { width: 95%; max-width: 500px; padding-bottom: 50px; margin-top: 20px; }
         .diary-card { background: rgba(255, 255, 255, 0.1); border-radius: 25px; overflow: hidden; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.2); }
-        .video-responsive { overflow: hidden; padding-bottom: 56.25%; position: relative; height: 0; background: #000; }
-        .video-responsive div { left: 0; top: 0; height: 100%; width: 100%; position: absolute; border: 0; }
+        .video-responsive { overflow: hidden;padding-bottom: 56.25%; /* 16:9 比例 */position: relative;height: 0;background: #000;border-radius: 20px 20px 0 0; /* 跟片圓角 */ }
+        .video-responsive div, 
+        .video-responsive iframe { position: absolute; top: 0;left: 0;width: 100% !important;height: 100% !important; border: 0;}
         
         .info-box { padding: 20px; }
         .date-tag { font-size: 12px; color: #00ccff; font-weight: bold; }
