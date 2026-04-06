@@ -18,7 +18,7 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal-box { background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 30px; text-align: center; }
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; }
-        .bank-info { background: #fff9c4; padding: 15px; border-radius: 15px; text-align: left; font-size: 14px; margin: 15px 0; }
+        .bank-info { background: #fff9c4; padding: 15px; border-radius: 15px; text-align: left; font-size: 14px; margin: 15px 0; border: 1px solid #fbc02d; }
     </style>
 </head>
 <body>
@@ -30,7 +30,7 @@
 </div>
 
 <div class="container">
-    <div id="event-list">載入中...</div>
+    <div id="event-list">📡 正在載入最新活動資訊...</div>
 </div>
 
 <div id="reg-modal" class="modal-overlay">
@@ -50,7 +50,7 @@
         <div class="bank-info" id="bank-info-box"></div>
         <input type="text" id="pay-name" placeholder="報名姓名">
         <input type="text" id="pay-code" placeholder="帳號末五碼" maxlength="5">
-        <button onclick="submitPay()" class="btn btn-reg">提交核對</button>
+        <button onclick="submitPay()" class="btn btn-reg">提交核對回報</button>
         <button onclick="closeModal('pay-modal')" style="background:none; border:none; color:#aaa; cursor:pointer; margin-top:10px;">關閉</button>
     </div>
 </div>
@@ -60,74 +60,102 @@
     let eventsData = [];
     let currentEvent = null;
 
-    // 1. 抓取活動
     function fetchEvents() {
+        console.log("開始抓取活動...");
         fetch(gasUrl + "?action=getEvents")
         .then(res => res.json())
         .then(data => {
+            console.log("成功抓取資料:", data);
             eventsData = data;
             renderEvents();
+        })
+        .catch(err => {
+            console.error("抓取失敗:", err);
+            document.getElementById('event-list').innerHTML = "暫時無法載入活動，請檢查網路。";
         });
     }
 
     function renderEvents() {
         const list = document.getElementById('event-list');
-        list.innerHTML = eventsData.map(ev => `
+        if (eventsData.length === 0) {
+            list.innerHTML = "目前暫無開放中的活動。";
+            return;
+        }
+
+        list.innerHTML = eventsData.map((ev, index) => `
             <div class="event-card">
-                <div class="event-date"><span>${ev.month}</span><span style="font-size:24px;">${ev.day}</span></div>
+                <div class="event-date">
+                    <span>${ev.month || '---'}</span>
+                    <span style="font-size:24px;">${ev.day || '--'}</span>
+                </div>
                 <div class="event-info">
                     <h3 style="margin:0;">${ev.title}</h3>
                     <p style="color:var(--price); font-weight:bold;">NT$ ${ev.price} / 人</p>
                     <p style="font-size:14px; color:#666;">${ev.desc}</p>
-                    <button class="btn btn-reg" onclick="openReg('${ev.title}', ${ev.price})">立即預約</button>
-                    <button class="btn" style="background:#eee;" onclick="openPay('${ev.title}', '${ev.bank}')">已匯款回報</button>
+                    <button class="btn btn-reg" onclick="openRegByIndex(${index})">立即預約報名</button>
+                    <button class="btn" style="background:#eee;" onclick="openPayByIndex(${index})">已匯款？填寫後五碼</button>
                 </div>
             </div>
         `).join('');
     }
 
-    function openReg(title, price) {
-        currentEvent = { title, price };
-        document.getElementById('form-title').innerText = title;
+    // 透過索引開啟報名，這最穩
+    function openRegByIndex(index) {
+        currentEvent = eventsData[index];
+        console.log("準備報名活動:", currentEvent.title);
+        document.getElementById('form-title').innerText = "預約：" + currentEvent.title;
         document.getElementById('reg-modal').style.display = 'flex';
     }
 
-    function openPay(title, bank) {
-        currentEvent = { title };
-        document.getElementById('bank-info-box').innerHTML = `<b>活動：${title}</b><br>匯款資訊：${bank}`;
+    function openPayByIndex(index) {
+        currentEvent = eventsData[index];
+        document.getElementById('bank-info-box').innerHTML = `
+            <b>活動：${currentEvent.title}</b><br>
+            <b>帳戶：</b>${currentEvent.bank}
+        `;
         document.getElementById('pay-modal').style.display = 'flex';
     }
 
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // 3. 提交報名
     function submitReg() {
-        const name = document.getElementById('reg-name').value;
-        const phone = document.getElementById('reg-phone').value;
+        const name = document.getElementById('reg-name').value.trim();
+        const phone = document.getElementById('reg-phone').value.trim();
         const people = document.getElementById('reg-people').value;
-        if(!name || !phone) return alert("請填寫完整");
+        if(!name || !phone) return alert("請填寫姓名與電話！");
 
-        fetch(gasUrl, {
-            method: "POST", mode: "no-cors",
-            body: JSON.stringify({
-                action: "register", title: currentEvent.title, name, phone, people, total: currentEvent.price * people
-            })
-        });
-        alert("報名資料已送出，請記得匯款並回來回報末五碼！");
+        const payload = {
+            action: "register",
+            title: currentEvent.title,
+            name: name,
+            phone: phone,
+            people: people,
+            total: currentEvent.price * people
+        };
+
+        fetch(gasUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+        
+        alert("報名完成！請依照指示匯款後回報。");
         closeModal('reg-modal');
     }
 
-    // 4. 提交末五碼
     function submitPay() {
-        const name = document.getElementById('pay-name').value;
-        const code = document.getElementById('pay-code').value;
-        if(!name || !code) return alert("請填寫完整");
+        const name = document.getElementById('pay-name').value.trim();
+        const code = document.getElementById('pay-code').value.trim();
+        if(!name || !code) return alert("請填寫姓名與末五碼！");
 
         fetch(gasUrl, {
-            method: "POST", mode: "no-cors",
-            body: JSON.stringify({ action: "reportPayment", event: currentEvent.title, name, code })
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify({
+                action: "reportPayment",
+                event: currentEvent.title,
+                name: name,
+                code: code
+            })
         });
-        alert("回報成功！工作人員將儘速核對。");
+
+        alert("回報成功！管理員核對後會發送通知。");
         closeModal('pay-modal');
     }
 
