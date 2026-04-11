@@ -7,7 +7,7 @@
     <style>
         body, html {
             margin: 0; padding: 0; height: 100%;
-            font-family: 'Microsoft JhengHei', sans-serif;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
             overflow: hidden;
         }
 
@@ -21,11 +21,11 @@
             z-index: -1;
         }
 
-        /* 深色遮罩讓白字更清晰 */
+        /* 深色遮罩 */
         .overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 30, 40, 0.4); 
+            background: rgba(0, 30, 40, 0.45); 
             z-index: 0;
         }
 
@@ -44,25 +44,29 @@
         .header {
             text-align: center;
             color: white;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             text-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
         .header h1 { font-size: 2.2rem; margin: 0; letter-spacing: 2px; }
         .header p { font-size: 1.1rem; margin-top: 10px; opacity: 0.9; }
 
-        /* 四宮格選單 */
+        /* 升級為響應式網格 (六宮格預留) */
         .grid-menu {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             width: 100%;
-            max-width: 850px;
+            max-width: 1000px;
         }
 
-        @media (max-width: 700px) {
-            .grid-menu { grid-template-columns: 1fr; gap: 15px; }
-            .header h1 { font-size: 1.8rem; }
+        @media (max-width: 900px) {
+            .grid-menu { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        }
+
+        @media (max-width: 600px) {
+            .grid-menu { grid-template-columns: 1fr; gap: 12px; overflow-y: auto; max-height: 70vh; padding: 10px; }
+            .content-wrapper { justify-content: flex-start; padding-top: 60px; }
         }
 
         /* 毛玻璃卡片樣式 */
@@ -71,8 +75,8 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-            padding: 30px 20px;
+            border-radius: 25px;
+            padding: 25px 15px;
             color: white;
             text-decoration: none;
             display: flex;
@@ -80,24 +84,30 @@
             align-items: center;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            text-align: center;
         }
 
         .menu-card:hover {
-            transform: translateY(-10px) scale(1.02);
+            transform: translateY(-8px) scale(1.03);
             background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-color: var(--accent, #00ccff);
         }
 
-        .card-icon { font-size: 3rem; margin-bottom: 15px; }
-        .card-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 8px; }
-        .card-desc { font-size: 0.9rem; opacity: 0.85; line-height: 1.4; }
+        /* Guide 專屬高亮樣式 */
+        .card-guide {
+            border: 1px solid rgba(0, 204, 255, 0.5);
+            background: rgba(0, 77, 64, 0.3);
+        }
+
+        .card-icon { font-size: 2.8rem; margin-bottom: 12px; }
+        .card-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 5px; }
+        .card-desc { font-size: 0.85rem; opacity: 0.85; line-height: 1.3; }
 
         .footer-tag {
             position: absolute;
             bottom: 20px;
             color: rgba(255,255,255,0.7);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 1px;
         }
     </style>
@@ -110,32 +120,38 @@
 <div class="content-wrapper">
     <div class="header">
         <h1>🐢 望安綠蠵龜保育中心</h1>
-        <p>澎湖望安｜數位守護者平台</p>
+        <p>數位守護者平台｜Wangan Eco-Portal</p>
     </div>
 
     <div class="grid-menu">
+        <a href="guide.html" class="menu-card card-guide">
+            <div class="card-icon">🌍</div>
+            <div class="card-title">數位導覽</div>
+            <div class="card-desc">Digital Guide<br>四語深度生態與歷史介紹</div>
+        </a>
+
         <a href="events.html" class="menu-card">
             <div class="card-icon">📅</div>
             <div class="card-title">每月大小事</div>
-            <div class="card-desc">最新活動訊息與線上報名系統</div>
-        </a>
-
-        <a href="https://wei0417-creator.github.io/wanganturtle/" class="menu-card">
-            <div class="card-icon">🗿</div>
-            <div class="card-title">望安巡守者</div>
-            <div class="card-desc">好善堂精神傳承與環境巡視</div>
-        </a>
-
-        <a href="https://wei0417-creator.github.io/seaturtle/" class="menu-card">
-            <div class="card-icon">🔍</div>
-            <div class="card-title">海龜守護者</div>
-            <div class="card-desc">館內實境互動與守護者挑戰</div>
+            <div class="card-desc">Latest Events<br>最新活動訊息與報名系統</div>
         </a>
 
         <a href="diary.html" class="menu-card">
             <div class="card-icon">🎥</div>
             <div class="card-title">海龜日誌</div>
-            <div class="card-desc">每日成長影像紀錄與加油打氣</div>
+            <div class="card-desc">Turtle Diary<br>每日成長影像紀錄</div>
+        </a>
+
+        <a href="https://wei0417-creator.github.io/wanganturtle/" class="menu-card">
+            <div class="card-icon">🗿</div>
+            <div class="card-title">望安巡守者</div>
+            <div class="card-desc">Conservation<br>好善堂精神傳承與巡視</div>
+        </a>
+
+        <a href="https://wei0417-creator.github.io/seaturtle/" class="menu-card">
+            <div class="card-icon">🔍</div>
+            <div class="card-title">海龜守護者</div>
+            <div class="card-desc">Interactive Challenge<br>館內實境互動挑戰</div>
         </a>
     </div>
 
